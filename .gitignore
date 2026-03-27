@@ -1,0 +1,18 @@
+# Python bytecode e cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribuição e pacotes
+dist/
+build/
+*.egg-info/
+*.tar.gz
+
+# Ambientes virtuais
+venv/
+.venv/
+
+# Configurações de IDE
+.vscode/
+.idea/

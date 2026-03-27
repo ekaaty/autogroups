@@ -1,0 +1,12 @@
+[Unit]
+Description=Run Autogroups synchronization hourly
+
+[Timer]
+# Run 5 minutes after boot to avoid IO contention
+OnBootSec=5min
+# Run every 1 hour thereafter
+OnUnitActiveSec=1h
+Unit=autogroups.service
+
+[Install]
+WantedBy=timers.target
