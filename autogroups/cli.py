@@ -29,7 +29,7 @@ def main():
     )
     sync_parser.add_argument(
         "--config-dir",
-        default="/etc/autogroups/autogroup.d/",
+        default="/etc/autogroups/groups.d/",
         help="Path to the directory containing YAML policy files"
     )
 

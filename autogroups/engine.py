@@ -22,18 +22,18 @@ class AutogroupsEngine:
         self.winbind = None
         try:
             from .backends.winbind import WinbindBackend
-            self.winbind = WinbindBackend()
-            if not self.winbind.samdb:
-                self.winbind = None # Backend loaded but DB connection failed
+            wb_instance = WinbindBackend()
+            if wb_instance.active:
+                self.winbind = wb_instance
         except (ImportError, Exception) as e:
             logger.warning(f"Winbind backend disabled or not available: {e}")
 
     def get_policy_files(self):
-        """Returns a list of all .yml files in the config directory."""
+        """Returns a list of all .yml and .yaml files."""
         if not os.path.exists(self.config_dir):
             logger.error(f"Config directory {self.config_dir} not found.")
             return []
-        return [f for f in os.listdir(self.config_dir) if f.endswith('.yml')]
+        return [f for f in os.listdir(self.config_dir) if f.endswith(('.yml', '.yaml'))]
 
     def process_group_policy(self, group_name, policy_data):
         """
@@ -80,15 +80,20 @@ class AutogroupsEngine:
             path = os.path.join(self.config_dir, policy_file)
             target_group = os.path.splitext(policy_file)[0]
 
-            if not os.path.exists(path):
+            if not os.path.isfile(path):
                 continue
 
             with open(path, 'r') as f:
                 try:
                     data = yaml.safe_load(f)
-                    policy_data = data.get(target_group, [])
-                    target_users = self.process_group_policy(target_group, policy_data)
-                    self._apply_to_system(target_group, target_users, dry_run=dry_run)
+                    if not isinstance(data, dict):
+                        logger.error(f"File {policy_file} ignored: Content is not a valid YAML dictionary.")
+                        continue
+
+                    if target_group in data:
+                        policy_data = data.get(target_group, [])
+                        target_users = self.process_group_policy(target_group, policy_data)
+                        self._apply_to_system(target_group, target_users, dry_run=dry_run)
                 except yaml.YAMLError as e:
                     logger.error(f"Failed to parse {policy_file}: {e}")
 
