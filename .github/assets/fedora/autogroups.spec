@@ -57,7 +57,7 @@ install -D -m 0644 data/autogroups.timer %{buildroot}%{_unitdir}/autogroups.time
 %{_unitdir}/autogroups.service 
 %{_unitdir}/autogroups.timer 
 %dir %{_sysconfdir}/autogroups/ 
-%dir %{_sysconfdir}/autogroups/autogroup.d/ 
+%dir %{_sysconfdir}/autogroups/groups.d/ 
 
 %changelog
 %autochangelog
