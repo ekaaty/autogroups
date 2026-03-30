@@ -14,6 +14,7 @@ BuildRequires:  python3-devel
 BuildRequires:  python3-pip
 BuildRequires:  python3-wheel
 BuildRequires:  python3-setuptools
+BuildRequires:  systemd-rpm-macros
 
 Requires:       python3-pyyaml
 Requires:       shadow-utils
