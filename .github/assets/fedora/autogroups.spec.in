@@ -1,4 +1,4 @@
-%global upstream_version 0.2.0
+%global upstream_version @VERSION@
 
 Name:           autogroups
 Version:        %{upstream_version}
