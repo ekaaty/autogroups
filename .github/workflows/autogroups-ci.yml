@@ -6,13 +6,13 @@ on:
 
 jobs:
   autogroups-ci:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout local
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v10
         with:
           enable-cache: true
           cache-dependency-glob: "pyproject.toml"
@@ -21,7 +21,7 @@ jobs:
         run: uv build
 
       - name: Upload artifacts for Release
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v8
         with:
           name: python-artifacts
           path: dist/*
