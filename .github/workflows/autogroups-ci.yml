@@ -15,12 +15,13 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
+          cache-dependency-glob: "pyproject.toml"
 
       - name: Build official sdist and wheel
         run: uv build
 
       - name: Upload artifacts for Release
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: python-artifacts
           path: dist/*
