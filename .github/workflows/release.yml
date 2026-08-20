@@ -1,23 +1,20 @@
 name: Publish release
 on: workflow_call
+
 jobs:
   publish:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
-      - name: Get version
+
+      - name: Download build artifacts
         uses: actions/download-artifact@v5
         with:
-          name: VERSION
-      - name: Set version
-        run: echo "VERSION=$(cat VERSION | xargs)" >> "$GITHUB_ENV"
-      - name: Download artifacts
-        uses: actions/download-artifact@v5
-        with:
-          pattern: autogroups-${{ env.VERSION }}*
-          merge-multiple: true
+          name: python-artifacts
+          path: dist/
+
       - name: Release
         uses: softprops/action-gh-release@v2.4.2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: autogroups-${{ env.VERSION }}*
+          files: dist/*
