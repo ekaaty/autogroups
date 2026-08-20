@@ -1,18 +1,19 @@
-# Python bytecode e cache
+# Python bytecode and cache
 __pycache__/
 *.py[cod]
 *$py.class
 
-# Distribuição e pacotes
+# Distribution and packages
 dist/
 build/
 *.egg-info/
 *.tar.gz
 
-# Ambientes virtuais
+# Virtual Enviroments
 venv/
 .venv/
+.uv/
 
-# Configurações de IDE
+# IDE Files
 .vscode/
 .idea/

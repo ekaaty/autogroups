@@ -1,50 +1,31 @@
-# Build Autogroups and publish release
 name: Autogroups build & release
 on:
   push:
     tags:
       - "v*"
-env:
-  REPOSITORY: https://github.com/ekaaty/autogroups
-  PACKAGE_NAME: autogroups
+
 jobs:
   autogroups-ci:
     runs-on: ubuntu-24.04
-    outputs:
-      VERSION: ${{ steps.step_get_artifact.outputs.VERSION }}
-      ARTIFACT: ${{ steps.step_get_artifact.outputs.ARTIFACT }}
-      REPOSITORY: ${{ steps.step_get_artifact.outputs.REPOSITORY }}
-      PACKAGE_NAME: ${{ steps.step_get_artifact.outputs.PACKAGE_NAME }}
     steps:
       - name: Checkout local
         uses: actions/checkout@v5
-      - name: Install build dependencies
-        run: sudo apt-get install git -y -qq
-      - name: Get latest Autogroups release tag
-        id: step_getlatest_tag
-        uses: ./.github/actions/latest-tag
-      - name: Download tag artifact
-        id: step_get_artifact
-        run: |
-          curl -L $REPOSITORY/archive/refs/tags/${{ env.LATEST_TAG }}.tar.gz --output autogroups-${{ env.LATEST_TAG }}.tar.gz
-          echo "ARTIFACT=autogroups-${{ env.LATEST_TAG }}.tar.gz" >> "$GITHUB_OUTPUT"
-          echo "REPOSITORY=$REPOSITORY" >> "$GITHUB_OUTPUT"
-          echo "PACKAGE_NAME=$PACKAGE_NAME" >> "$GITHUB_OUTPUT" 
-          # use the tag name but remove the 'v' for the artifact name to publish
-          tagname=$(echo ${{ env.LATEST_TAG }} | sed 's/v//')
-          echo "VERSION=$tagname" >> "$GITHUB_OUTPUT"
-      - uses: actions/cache/save@v4
-        id: cache
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          path: ${{ steps.step_get_artifact.outputs.ARTIFACT }}
-          key: ${{ runner.os }}-v${{ steps.step_get_artifact.outputs.VERSION }}-${{ hashFiles(steps.step_get_artifact.outputs.ARTIFACT) }}
-      - name: Save version
-        run: echo ${{ steps.step_get_artifact.outputs.VERSION }} > VERSION
-      - name: Upload version
+          enable-cache: true
+
+      - name: Build official sdist and wheel
+        run: uv build
+
+      - name: Upload artifacts for Release
         uses: actions/upload-artifact@v5
         with:
-          name: VERSION
-          path: VERSION
+          name: python-artifacts
+          path: dist/*
           retention-days: 1
+
   release:
+    needs: autogroups-ci
     uses: ./.github/workflows/release.yml
